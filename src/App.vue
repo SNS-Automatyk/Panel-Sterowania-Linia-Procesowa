@@ -1,35 +1,65 @@
 <script>
-const API_URL = `https://jsonplaceholder.typicode.com/todos/1`
+const API_URL = `http://146.59.44.4:8000/`
+const API_STATUS = API_URL + `status/`;
+const API_TURN_ON = API_URL+`turnOn/`;
+const API_TURN_OFF = API_URL+`turnOff/`;
 
 export default {
   data() {
     return {
-      url: API_URL,
-      response: ''
+      response: '',
+      processing: false
     }
   },
   methods: {
-    async buttonClicked() {
+    async loadData() {
       console.log("button")
       this.response = "Loading..."
-      this.response= await (await fetch(this.url)).text()
+      const response = await fetch(API_STATUS)
+      response.json().then(data => {
+        this.response = data
+        this.processing = data.data.processing
+      })
+    },
+    processingChange(event) {
+      this.processing = event.target.checked
+      if (this.processing) {
+        fetch(API_TURN_ON, {method: "POST"})
+      } else {
+        fetch(API_TURN_OFF, {method: "POST"})
+      }
     }
+  },
+  mounted() {
+    this.loadData()
   }
 }
+
 </script>
 
+
+<script setup>
+import PowerButton from './components/PowerButton.vue'
+</script>
+
+
 <template>
-  <div class="container">
+  <PowerButton :processing="processing" :processingChange="processingChange"/>
+    <span @click="loadData" class="button center">Odśwież</span>
+
+    <p class="mt-2">{{response}}</p>
+  <!-- <div class="container">
     <h1>1. Input API URL:</h1>
     <input v-model="url">
     <h1>2. Press the button:</h1>
-    <span @click="buttonClicked" class="button center">Button</span>
-
-    <p class="mt-2">{{response}}</p>
-  </div>
+  </div> -->
 </template>
 
 <style scoped>
+
+PowerButton {
+  margin: 0 auto;
+}
 
 .container {
   display: flex;
