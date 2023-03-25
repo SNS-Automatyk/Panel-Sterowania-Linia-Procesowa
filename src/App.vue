@@ -8,10 +8,19 @@ export default {
   data() {
     return {
       response: '',
-      processing: false,
-      active: false,
-      status_message: '?',
-      speed: 10.0
+      data: {
+        processing: false,
+        active: false,
+        status_message: '?',
+        current_speed: 0.0,
+
+        count_ok: 0,
+        count_nok: 0,
+        manual_mode: false,
+        warn_active: false,
+        alarm_active: false,
+        safety_active: false
+      }
     }
   },
   methods: {
@@ -21,10 +30,19 @@ export default {
       const response = await fetch(API_STATUS)
       response.json().then(data => {
         this.response = data
-        this.processing = data.data.processing
-        this.active = data.data.active
-        this.status_message = data.data.status_message
-        // this.speed = data.data.speed
+        this.data = data.data
+        // this.processing = data.data.processing
+        // this.active = data.data.active
+        // this.status_message = data.data.status_message
+        // this.current_speed = data.data.current_speed
+
+        // this.count_ok = data.data.count_ok
+        // this.count_nok = data.data.count_nok
+        // this.manual_mode = data.data.manual_mode
+        // this.warn_active = data.data.warn_active
+        // this.alarm_active = data.data.alarm_active
+        // this.safety_active = data.data.safety_active
+
       })
     },
     async processingChange(event) {
@@ -33,13 +51,13 @@ export default {
         const response = await fetch(API_TURN_ON, {method: "POST"});
         response.json().then(data => {
           this.response = data
-          this.processing = data.data.processing
+          this.data.processing = data.data.processing
         })
       } else {
         const response = await fetch(API_TURN_OFF, {method: "POST"});
         response.json().then(data => {
           this.response = data
-          this.processing = data.data.processing
+          this.data.processing = data.data.processing
         })
       }
     }
@@ -56,17 +74,20 @@ export default {
 import PowerButton from './components/PowerButton.vue'
 import PowerStatus from './components/PowerStatus.vue'
 import Speed from './components/Speed.vue'
+import Cards from './components/Cards.vue'
 </script>
 
 
 <template>
-  <PowerStatus :active="active"/>
-  <PowerButton :processing="processing" :processingChange="processingChange"/>
-  <p class="status">Status: <span>{{status_message}}</span></p>
-  <Speed :speed="speed"/>
-    <span @click="loadData" class="button center">Odśwież</span>
+  <PowerStatus :active="data.active"/>
+  <PowerButton :processing="data.processing" :processingChange="processingChange"/>
+  <p class="status">Status: <span>{{data.status_message}}</span></p>
+  <Speed :speed="data.current_speed"/>
+  <Cards v-bind="data"/>
 
-    <p class="mt-2">{{response}}</p>
+  <span @click="loadData" class="button center">Odśwież</span>
+
+  <p class="mt-2">{{response}}</p>
   <!-- <div class="container">
     <h1>1. Input API URL:</h1>
     <input v-model="url">
@@ -74,58 +95,29 @@ import Speed from './components/Speed.vue'
   </div> -->
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
+
 .card {
   background-color: var(--color-background-soft);
   border-radius: 10px;
-  margin: 10px;
+  margin: 10px 0;
+  margin-bottom: 0px;
   text-align: center;
   color: #707070;
+  padding: 5px 15px;
 }
+
 .status {
-  font-size: 17pt;
+  font-size: 17px;
   font-weight:500;
   color: #707070;
   margin-top: 20px;
   text-align: center;
   span {
-    font-size: 20pt;
+    font-size: 20px;
     font-weight: bold;
-    color: #59A8AD;
+    color: var(--blue);
   }
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  text-align: center;
-}
-
-.mt-2 {
-  margin-top: 10px;
-}
-
-.button {
- background-color: rgb(222, 66, 49);
- color: var(--color-heading-reversed);
- font-weight: 600;
- padding: 10px 60px;
- border-radius: 10px;
-}
-
-.button:hover {
- background-color: rgb(181, 46, 31);
-}
-
-input {
-  font-size: 15pt;
-  max-width: 100%;
-  width: 500px;
-
-  color: var(--color-text);
-  background: var(--color-background-soft);
 }
 
 

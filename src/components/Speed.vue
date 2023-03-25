@@ -4,7 +4,7 @@ import { isIntegerKey } from '@vue/shared';
 export default {
     props: {
         speed: {
-            type: Float32Array,
+            type: Number,
             required: true
         }
     }
@@ -16,21 +16,26 @@ export default {
         <p> AKTUALNA PRĘDKOŚĆ</p>
         <div class="graph">
             <div class="button">
+                <p>{{ speed }}%</p>
                 <svg class="power-off">
-                    <use xlink:href="#circle" class="circle" />
+                    <use xlink:href="#circle1" class="circle" />
                 </svg>
                 <svg class="power-on">
-                    <use xlink:href="#circle" class="circle" :style="{ 'stroke-dashoffset': 220-(speed/100*160) }"/>
+                    <use xlink:href="#circle1" class="circle" :style="{ 'stroke-dashoffset': 220-(speed/100*160) }"/>
                 </svg>
             </div>
         </div>
+
+        <button>
+            <p>Zmień prędkość</p>
+        </button>
 
 
         
     
         <!-- SVG -->
         <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" id="circle">
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" id="circle1">
             <circle cx="75" cy="80" r="35"/>
         </symbol>
         </svg>
@@ -46,20 +51,31 @@ p {
     font-size: 15px;
     // margin-top: 20px;
 }
+button {
+    padding: 5px 15px;
+    background-color: var(--color-background-mute);
+    border: none;
+    border-radius: 50px;
+    filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.25));
+    p {
+        font-weight: normal;
+        font-size: 16px;
+        color: var(--blue);
+    }
+}
 
 
 .graph {
-    --color-fill: #51D49D;
-      --width: 187px;    
-      --height: 187px;
+    --color-fill: var(--green);
+      --width: 250px;    
+      --height: 200px;
       position: relative;
       display: flex;
       justify-content: center;
       align-items: center;
       width: var(--width);
       height: var(--height);
-      margin: 0 auto;
-      margin-top: 15px;
+      margin: -35px auto;
       .button {
         width: 100%;
         height: 100%;
@@ -68,6 +84,12 @@ p {
         align-items: center;
         position: relative;
         transform: translateY(-3px);
+        p {
+          margin-top: 9px;
+          font-weight: bold;
+          font-size: 20px;
+          color: var(--color-fill);
+        }
         &:after {
           content: "";
           width: 100%;
@@ -87,7 +109,7 @@ p {
           z-index: 1;
           fill: none;
           stroke: var(--color-fill);
-          stroke-width: 6%;
+          stroke-width: 15px;
           stroke-linecap: round;
           stroke-linejoin: round;
           .circle {

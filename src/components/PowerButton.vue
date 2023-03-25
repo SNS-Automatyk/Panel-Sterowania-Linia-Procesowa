@@ -33,10 +33,10 @@ export default {
     <!-- SVG -->
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
       <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" id="line">
-        <line x1="75" y1="34" x2="75" y2="58"/>
+        <line x1="75" y1="34" x2="75" y2="78"/>
       </symbol>
       <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" id="circle">
-        <circle cx="75" cy="80" r="35"/>
+        <circle cx="75" cy="80" r="45"/>
       </symbol>
     </svg>
     
@@ -44,7 +44,7 @@ export default {
     
 <style scoped lang="scss">
     .power-switch {
-    --color-fill: #51D49D;
+    --color-fill: var(--green);
       --width: 187px;    
       --height: 187px;
       position: relative;
@@ -64,7 +64,7 @@ export default {
         justify-content: center;
         align-items: center;
         position: relative;
-        transform: translateY(-3px);
+        transform: translateY(-5px);
         &:after {
           content: "";
           width: 100%;
@@ -84,7 +84,7 @@ export default {
           z-index: 1;
           fill: none;
           stroke: var(--color-fill);
-          stroke-width: 6%;
+          stroke-width: 15px;
           stroke-linecap: round;
           stroke-linejoin: round;
           .line {
@@ -92,10 +92,10 @@ export default {
           }
           .circle {
             opacity: .2;
-            transform: rotate(-58deg);
+            transform: rotate(-40deg);
             transform-origin: center calc(80% - calc(0.267 * var(--height)));
-            stroke-dasharray: 220;
-            stroke-dashoffset: 40;
+            stroke-dasharray: 290;
+            stroke-dashoffset: 90;
           }
         }
         .power-on {
@@ -105,7 +105,7 @@ export default {
           }
           .circle {
             opacity: 1;
-            stroke-dashoffset: 220;
+            stroke-dashoffset: 290;
             transition: transform 0s ease, stroke-dashoffset 1s ease 0s;
           }
         }
@@ -133,7 +133,8 @@ export default {
                 animation: line-animation .8s ease-in forwards;
               }
               .circle {
-                transform: rotate(302deg);
+                transform: rotate(320deg);
+                transition: transform .4s ease .2s, stroke-dashoffset .4s ease .2s;
               }
             }
             .power-on {
@@ -142,8 +143,8 @@ export default {
                 transition: opacity .05s ease-in .55s;
               }
               .circle {
-                transform: rotate(302deg);
-                stroke-dashoffset: 40;
+                transform: rotate(320deg);
+                stroke-dashoffset: 90;
                 transition: transform .4s ease .2s, stroke-dashoffset .4s ease .2s;
               }
             }

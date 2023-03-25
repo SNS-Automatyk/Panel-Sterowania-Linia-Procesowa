@@ -34,12 +34,12 @@ export default {
     p {
         font-size: 14px;
         font-weight: 600;
-        color: #51D49D;
+        color: var(--green);
         margin: 0 6px;
     }
 }
 .powerstatus:not([active="true"]) {
-    background-color: #D45951;
+    background-color: var(--red);
     .lightning {
         filter: none;
     }
