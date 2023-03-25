@@ -1,12 +1,6 @@
 <script>
-import { vModelCheckbox } from 'vue';
 
 export default {
-//   data() {
-//     return {
-//         processing: true
-//     }
-//   },
   props: {
     processing: {
         type: Boolean,
@@ -22,7 +16,6 @@ export default {
 
 <template>
     <!-- <p>Status: {{ processing }}</p> -->
-    <div>
         <div class="power-switch">
             <input type="checkbox" :checked="processing" v-on:change="processingChange" />
             <div class="button">
@@ -36,7 +29,6 @@ export default {
                 </svg>
             </div>
         </div>
-    </div>
     
     <!-- SVG -->
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -51,29 +43,20 @@ export default {
 </template>
     
 <style scoped lang="scss">
-@-webkit-keyframes rotating /* Safari and Chrome */ {
-  from {
-    -webkit-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  to {
-    -webkit-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
     .power-switch {
     --color-fill: #51D49D;
-      --width: 150px;    
-      --height: 150px;
+      --width: 187px;    
+      --height: 187px;
       position: relative;
-    //   display: flex;
+      // display: flex;
       justify-content: center;
       align-items: center;
       width: var(--width);
       height: var(--height);
       margin: 0 auto;
+      margin-top: 15px;
+      box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
       .button {
         width: 100%;
         height: 100%;
@@ -81,6 +64,7 @@ export default {
         justify-content: center;
         align-items: center;
         position: relative;
+        transform: translateY(-3px);
         &:after {
           content: "";
           width: 100%;
@@ -109,26 +93,12 @@ export default {
           .circle {
             opacity: .2;
             transform: rotate(-58deg);
-            transform-origin: center calc(80% - 40px);
-            // -webkit-transform-origin: 50% 50%;
-
-            // -webkit-animation: rotating 1s linear infinite;
-            // -moz-animation: rotating 1s linear infinite;
-            // -ms-animation: rotating 1s linear infinite;
-            // -o-animation: rotating 1s linear infinite;
-            // animation: rotating 1s linear infinite;
-
-            // transform-origin: 63.8px 68px;
-            // transform-origin: calc(var(--width) * 0.426) calc(var(--height) * 0.453);
-            // transform-origin: center 50%;
-            // transform-origin: center;
-            // transform: translate(calc(var(--width) * 0.5), calc(var(--height) * 0.5));
+            transform-origin: center calc(80% - calc(0.267 * var(--height)));
             stroke-dasharray: 220;
             stroke-dashoffset: 40;
           }
         }
         .power-on {
-        //   filter: drop-shadow(0px 0px 6px rgba(255,255,255,.8));
           .line {
             opacity: 0;
             transition: opacity .3s ease 1s;
@@ -136,9 +106,6 @@ export default {
           .circle {
             opacity: 1;
             stroke-dashoffset: 220;
-            // transform-origin: 63.8px 68px;
-            // transform-origin: calc(var(--width) * 0.426) calc(var(--height) * 0.453);
-            // transform-origin: center;
             transition: transform 0s ease, stroke-dashoffset 1s ease 0s;
           }
         }
@@ -166,7 +133,7 @@ export default {
                 animation: line-animation .8s ease-in forwards;
               }
               .circle {
-                // transform: rotate(302deg);
+                transform: rotate(302deg);
               }
             }
             .power-on {
@@ -175,8 +142,7 @@ export default {
                 transition: opacity .05s ease-in .55s;
               }
               .circle {
-                // transform: rotate(302deg);
-            // transform-origin: 150px 110px;
+                transform: rotate(302deg);
                 stroke-dashoffset: 40;
                 transition: transform .4s ease .2s, stroke-dashoffset .4s ease .2s;
               }
@@ -193,12 +159,12 @@ export default {
       10% {
         transform: translateY( calc(var(--height) * 0.067)  );
       }
-      50% {
+      40% {
         transform: translateY( calc(var(--height) * -0.167) );
       }
-    //   60% {
-    //     transform: translateY( calc(var(--height) * -0.167));
-    //   }
+      60% {
+        transform: translateY( calc(var(--height) * -0.167));
+      }
       85% {
         transform: translateY( calc(var(--height) * 0.067) );
       }

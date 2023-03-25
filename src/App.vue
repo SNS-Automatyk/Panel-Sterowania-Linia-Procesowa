@@ -8,7 +8,10 @@ export default {
   data() {
     return {
       response: '',
-      processing: false
+      processing: false,
+      active: false,
+      status_message: '?',
+      speed: 10.0
     }
   },
   methods: {
@@ -19,14 +22,25 @@ export default {
       response.json().then(data => {
         this.response = data
         this.processing = data.data.processing
+        this.active = data.data.active
+        this.status_message = data.data.status_message
+        // this.speed = data.data.speed
       })
     },
-    processingChange(event) {
+    async processingChange(event) {
       this.processing = event.target.checked
       if (this.processing) {
-        fetch(API_TURN_ON, {method: "POST"})
+        const response = await fetch(API_TURN_ON, {method: "POST"});
+        response.json().then(data => {
+          this.response = data
+          this.processing = data.data.processing
+        })
       } else {
-        fetch(API_TURN_OFF, {method: "POST"})
+        const response = await fetch(API_TURN_OFF, {method: "POST"});
+        response.json().then(data => {
+          this.response = data
+          this.processing = data.data.processing
+        })
       }
     }
   },
@@ -40,11 +54,16 @@ export default {
 
 <script setup>
 import PowerButton from './components/PowerButton.vue'
+import PowerStatus from './components/PowerStatus.vue'
+import Speed from './components/Speed.vue'
 </script>
 
 
 <template>
+  <PowerStatus :active="active"/>
   <PowerButton :processing="processing" :processingChange="processingChange"/>
+  <p class="status">Status: <span>{{status_message}}</span></p>
+  <Speed :speed="speed"/>
     <span @click="loadData" class="button center">Odśwież</span>
 
     <p class="mt-2">{{response}}</p>
@@ -55,10 +74,25 @@ import PowerButton from './components/PowerButton.vue'
   </div> -->
 </template>
 
-<style scoped>
-
-PowerButton {
-  margin: 0 auto;
+<style scoped lang="scss">
+.card {
+  background-color: var(--color-background-soft);
+  border-radius: 10px;
+  margin: 10px;
+  text-align: center;
+  color: #707070;
+}
+.status {
+  font-size: 17pt;
+  font-weight:500;
+  color: #707070;
+  margin-top: 20px;
+  text-align: center;
+  span {
+    font-size: 20pt;
+    font-weight: bold;
+    color: #59A8AD;
+  }
 }
 
 .container {
