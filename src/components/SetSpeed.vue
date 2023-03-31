@@ -3,13 +3,16 @@ const API_URL = `http://146.59.44.4:8000/`
 const API_SET_SPEED = API_URL + `speed/`;
 
 export default {
-    data() {
+    data: function () {
         return {
-            speed: 0
+            speed: 0,
         }
     },
-    mounted() {
-        this.speed = this.$route.params.speed;
+    props: {
+        data: {
+            type: Object,
+            required: false
+        }
     },
     methods: {
         inputChanged: function (e) {
@@ -17,6 +20,7 @@ export default {
 
             if (int.includes('%')) {
                 e.target.value = '%';
+                e.target.setSelectionRange(0, 0);
             // } else if (int.length >= 3 && int.length <= 4 && !int.includes('.')) {
             //     e.target.value = int.slice(0, 2) + '.' + int.slice(2, 3) + '%';
             //     e.target.setSelectionRange(4, 4);
@@ -55,13 +59,23 @@ export default {
             }
         },
 
+        loadSpeed: function () {
+            this.speed = this.data.current_speed;
+        },
+
         saveSpeed: function () {
+            this.data.current_speed = "?";
             const response = fetch(API_SET_SPEED + this.speed, { method: "PUT" });
             // response.json().then(data => {
             //     this.response = data
             //     this.data.sp = data.data.processing
             // })
-            this.$router.go(-1);
+            this.close();
+        },
+         
+        close: function () {
+            this.$emit('hide')
+            
         }
     }
 }
@@ -69,10 +83,9 @@ export default {
 
 
 </script>
-<!-- TODO: Add speed setting -->
 <template>
     <div class="card">
-        <div @click="$router.go(-1)" class="back-button"></div>
+        <div @click="close" class="back-button"></div>
         <p> ZMIEŃ PRĘDKOŚĆ</p>
         <div class="graph">
             <div class="button">
@@ -90,7 +103,7 @@ export default {
         </div>
 
         <!-- <router-link to="/speed" v-slot="{ navigate }"> -->
-            <button v-on:click="saveSpeed">
+            <button @click="saveSpeed">
                 <p>Zapisz</p>
             </button>
         <!-- </router-link> -->
@@ -114,6 +127,7 @@ p {
 }
 .card {
     padding: 45px 15px;
+    margin: 10px;
 }
 input.speed {
     text-align: center;
@@ -138,6 +152,7 @@ input.speed {
     top: 0;
     padding-left: 15px;
     font-size: 30px;
+    z-index: 2;
 }
 .back-button:after{
     content: "\00d7"; /* This will render the 'X' */

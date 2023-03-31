@@ -59,9 +59,6 @@ export default {
             }
         }
     },
-    //   mounted() {
-    //     this.loadData()
-    //   }
 }
 
 </script>
@@ -78,8 +75,9 @@ import Cards from './Cards.vue'
     <PowerStatus :active="data.active" />
     <PowerButton :processing="data.processing" :processingChange="processingChange" />
     <p class="status">Status: <span>{{ data.status_message }}</span></p>
-    <Speed :speed="data.current_speed" />
+    <Speed :data="data" />
     <Cards v-bind="data" />
+    
 
     <!-- <span @click="loadData" class="button center">Odśwież</span>
 
@@ -115,4 +113,6 @@ import Cards from './Cards.vue'
         color: var(--blue);
     }
 }
+
+
 </style>

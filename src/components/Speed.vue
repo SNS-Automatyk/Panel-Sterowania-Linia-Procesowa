@@ -1,35 +1,52 @@
 <script>
+import SetSpeed from './SetSpeed.vue'
+import Overlay from './Overlay.vue'
 
 export default {
     props: {
-        speed: {
-            type: Number,
-            required: true
+        data: {
+            type: Object,
+            required: false
         }
+    },
+    methods: {
+        showSpeed: function () {
+            this.$refs.setSpeedOverlay.show();
+            this.$refs.setSpeed.loadSpeed();
+        },
+        hideSpeed: function () {
+            this.$refs.setSpeedOverlay.hide();
+        }
+    },
+    components: {
+        SetSpeed,
+        Overlay
     }
 }
 </script>
+
+
 
 <template>
     <div class="card">
         <p> AKTUALNA PRĘDKOŚĆ</p>
         <div class="graph">
             <div class="button">
-                <p>{{ speed }}%</p>
+                <p>{{ data.current_speed }}%</p>
                 <svg class="power-off">
                     <use xlink:href="#circle1" class="circle" />
                 </svg>
                 <svg class="power-on">
-                    <use xlink:href="#circle1" class="circle" :style="{ 'stroke-dashoffset': 220-(speed/100*160) }"/>
+                    <use xlink:href="#circle1" class="circle" :style="{ 'stroke-dashoffset': 220-(data.current_speed/100*160) }"/>
                 </svg>
             </div>
         </div>
 
-        <router-link :to="'speed/' + speed">
-            <button>
+        <!-- <router-link :to="'speed/' + speed"> -->
+            <button v-on:click="showSpeed">
                 <p>Zmień prędkość</p>
             </button>
-        </router-link>
+        <!-- </router-link> -->
 
 
         
@@ -41,6 +58,11 @@ export default {
         </symbol>
         </svg>
     </div>
+
+    <Overlay ref="setSpeedOverlay">
+        <SetSpeed @hide="hideSpeed" ref="setSpeed" :data="data"/>
+    </Overlay>
+
 </template>
 
 <style scoped lang="scss">
