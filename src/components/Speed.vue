@@ -13,9 +13,6 @@ export default {
         showSpeed: function () {
             this.$refs.setSpeedOverlay.show();
             this.$refs.setSpeed.loadSpeed();
-        },
-        hideSpeed: function () {
-            this.$refs.setSpeedOverlay.hide();
         }
     },
     components: {
@@ -60,7 +57,7 @@ export default {
     </div>
 
     <Overlay ref="setSpeedOverlay">
-        <SetSpeed @hide="hideSpeed" ref="setSpeed" :data="data"/>
+        <SetSpeed @hide="$refs.setSpeedOverlay.hide()" ref="setSpeed" :data="data"/>
     </Overlay>
 
 </template>

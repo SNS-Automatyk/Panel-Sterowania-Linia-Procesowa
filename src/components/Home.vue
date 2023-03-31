@@ -42,22 +42,6 @@ export default {
 
             })
         },
-        async processingChange(event) {
-            this.processing = event.target.checked
-            if (this.processing) {
-                const response = await fetch(API_TURN_ON, { method: "POST" });
-                response.json().then(data => {
-                    this.response = data
-                    this.data.processing = data.data.processing
-                })
-            } else {
-                const response = await fetch(API_TURN_OFF, { method: "POST" });
-                response.json().then(data => {
-                    this.response = data
-                    this.data.processing = data.data.processing
-                })
-            }
-        }
     },
 }
 
@@ -73,7 +57,7 @@ import Cards from './Cards.vue'
 
 <template>
     <PowerStatus :active="data.active" />
-    <PowerButton :processing="data.processing" :processingChange="processingChange" />
+    <PowerButton :data="data"  />
     <p class="status">Status: <span>{{ data.status_message }}</span></p>
     <Speed :data="data" />
     <Cards v-bind="data" />
