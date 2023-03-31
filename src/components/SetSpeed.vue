@@ -15,7 +15,9 @@ export default {
         }
     },
     methods: {
+
         inputChanged: function (e) {
+            console.log('input changed')
             let int = e.target.value.slice(0, e.target.value.length - 1);
 
             if (int.includes('%')) {
@@ -42,7 +44,8 @@ export default {
             if (this.getInt(e.target.value)  % 1 === 0) {
                 this.speed = this.getInt(e.target.value);
             }
-            if (e.target.selectionStart ==  e.target.value.length == 1) {
+
+            if (e.target.selectionStart == e.target.value.length+1) {
                 e.target.setSelectionRange(e.target.value.length - 1, e.target.value.length - 1);
             }
 
@@ -61,6 +64,9 @@ export default {
 
         loadSpeed: function () {
             this.speed = this.data.current_speed;
+            this.$refs.input.value = this.speed + '%';
+            this.$refs.input.setSelectionRange(this.$refs.input.value.length - 1, this.$refs.input.value.length - 1);
+            
         },
 
         saveSpeed: function () {
@@ -90,7 +96,7 @@ export default {
         <div class="graph">
             <div class="button">
                 <div>
-                    <p><input class="speed" type="text" :value="speed+'%'" maxlength="4" v-on:input="inputChanged" pattern="\d*"></p>
+                    <p><input class="speed" type="text" ref="input" maxlength="4" v-on:input="inputChanged" pattern="\d*"></p>
                     <p class="description">Tap to edit</p>
                 </div>
                 <svg class="power-off">
