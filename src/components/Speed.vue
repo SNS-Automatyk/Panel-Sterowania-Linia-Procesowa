@@ -1,5 +1,4 @@
 <script>
-import { isIntegerKey } from '@vue/shared';
 
 export default {
     props: {
@@ -26,9 +25,11 @@ export default {
             </div>
         </div>
 
-        <button>
-            <p>Zmień prędkość</p>
-        </button>
+        <router-link :to="'speed/' + speed">
+            <button>
+                <p>Zmień prędkość</p>
+            </button>
+        </router-link>
 
 
         
@@ -59,7 +60,7 @@ button {
     filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.25));
     p {
         font-weight: normal;
-        font-size: 16px;
+        font-size: 15px;
         color: var(--blue);
     }
 }

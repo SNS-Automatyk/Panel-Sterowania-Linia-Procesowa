@@ -14,6 +14,8 @@ export default {
 }
 </script>
 
+<!-- TODO: Add hold to turn off -->
+
 <template>
     <!-- <p>Status: {{ processing }}</p> -->
         <div class="power-switch">
