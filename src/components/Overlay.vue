@@ -20,13 +20,18 @@ export default {
                 this.$el.style.display = "none";
                 this.$el.firstElementChild.classList.remove("scale-down-top");
             }, 200)
+        },
+        hideOnBackround: function (e) {
+            if (e.target.classList.contains("overlay")) {
+                this.hide();
+            }
         }
     }
 }
 </script>
 
 <template>
-    <div class="overlay">
+    <div class="overlay" @click="hideOnBackround">
         <div>
          <slot></slot>
         </div>
