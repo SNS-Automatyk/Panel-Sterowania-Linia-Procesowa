@@ -88,7 +88,7 @@ import Cards from './Cards.vue'
     font-size: 17px;
     font-weight: 500;
     color: #707070;
-    margin-top: 20px;
+    margin-top: 12px;
     text-align: center;
 
     span {

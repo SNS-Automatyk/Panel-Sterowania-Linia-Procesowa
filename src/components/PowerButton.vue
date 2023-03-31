@@ -86,8 +86,8 @@ export default {
 <style scoped lang="scss">
 .power-switch {
   --color-fill: var(--green);
-  --width: 187px;
-  --height: 187px;
+  --width: 150px;
+  --height: 150px;
   position: relative;
   // display: flex;
   justify-content: center;

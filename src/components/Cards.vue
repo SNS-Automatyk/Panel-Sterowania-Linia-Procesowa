@@ -65,7 +65,7 @@ export default {
 <style scoped lang="scss">
 .card {
     width: calc(50% - 5px);
-    height: 90px;
+    height: 80px;
     text-align: left;
     display: flex;
     flex-direction: column;
@@ -74,22 +74,22 @@ export default {
 
 h1 {
     margin-top: -8px;
-    font-size: 36px;
+    font-size: 34px;
     font-weight: bold;
 }
 h2 {
     margin-top: -6px;
-    font-size: 21px;
+    font-size: 19px;
     font-weight: bold;
 }
 .p1 {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: normal;
     color: #717171;
 }
 .p2 {
     margin-top: -8px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: normal;
     color: #717171;
 }
