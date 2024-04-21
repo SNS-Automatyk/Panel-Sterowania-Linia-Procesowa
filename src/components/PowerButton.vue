@@ -2,7 +2,7 @@
 import Overlay from './Overlay.vue'
 import TurnOff from './TurnOff.vue'
 
-const API_URL = `http://146.59.44.4:8000/`
+import { API_URL } from '../variables'
 const API_TURN_ON = API_URL + `turnOn/`;
 const API_TURN_OFF = API_URL + `turnOff/`;
 

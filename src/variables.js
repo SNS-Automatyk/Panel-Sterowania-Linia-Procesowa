@@ -1,0 +1,1 @@
+export const API_URL = `http://app.automatyk.pwr.edu.pl:8000/`;

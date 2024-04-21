@@ -1,5 +1,5 @@
 <script>
-const API_URL = `http://146.59.44.4:8000/`
+import { API_URL } from '../variables'
 const API_SET_SPEED = API_URL + `speed/`;
 
 export default {
