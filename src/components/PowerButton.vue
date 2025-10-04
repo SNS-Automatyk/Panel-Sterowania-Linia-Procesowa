@@ -29,7 +29,7 @@ export default {
     },
 
     async processingChange() {
-      const response = await fetch(API_URL, {
+      await fetch(API_URL, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: { on_off: 1 } })
@@ -44,6 +44,7 @@ export default {
         this.showTurnOff()
         return
       }
+      this.data.green_light = 1
       this.processingChange()
     }
   }

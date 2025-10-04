@@ -24,7 +24,8 @@ export default {
                 "good_count": 0,
                 "bad_count": 0,
                 "status": 0,
-                "speed": 0
+                "speed": 0,
+                is_connected: false,
             },
             rpi_last_connected: null,
             update_key: 0,
@@ -66,6 +67,7 @@ export default {
 <script setup>
 import PowerButton from './PowerButton.vue'
 import PowerStatus from './PowerStatus.vue'
+import ExtraButtons from './ExtraButtons.vue'
 import Speed from './Speed.vue'
 import Cards from './Cards.vue'
 </script>
@@ -76,8 +78,9 @@ import Cards from './Cards.vue'
         <PowerStatus :is_connected="data.is_connected" :rpi_connected="rpi_connected" />
         <PowerButton :data="data" />
         <p class="status">Status: <span>{{ data.status }}</span></p>
+        <ExtraButtons />
         <Speed :data="data" />
-        <Cards v-bind="data" />
+        <Cards :data="data" />
 
 
         <!-- <span @click="loadData" class="button center">Odśwież</span>

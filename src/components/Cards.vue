@@ -1,42 +1,10 @@
 <script>
 export default {
     props: {
-        error: {
-            type: Number,
+        data: {
+            type: Object,
             required: true
         },
-        switch_status: {
-            type: Number,
-            required: true
-        },
-        green_light: {
-            type: Number,
-            required: true
-        },
-        red_light: {
-            type: Number,
-            required: true
-        },
-        orange_light: {
-            type: Number,
-            required: true
-        },
-        yellow_button_light: {
-            type: Number,
-            required: true
-        },
-        white_light: {
-            type: Number,
-            required: true
-        },
-        good_count: {
-            type: Number,
-            required: true
-        },
-        bad_count: {
-            type: Number,
-            required: true
-        }
     }
 }
 </script>
@@ -44,27 +12,27 @@ export default {
 <template>
     <div class="card_container">
         <div class="card">
-            <h1 style="color: var(--green)">{{ good_count }}</h1>
+            <h1 style="color: var(--green)">{{ data.good_count }}</h1>
             <p class="p2">Poprawnych itemków</p>
         </div>
         <div class="card">
-            <h1 style="color: var(--orange)">{{ bad_count }}</h1>
+            <h1 style="color: var(--orange)">{{ data.bad_count }}</h1>
             <p class="p2">Złych itemków</p>
         </div>
         <div class="card">
             <p class="p1">Status systemu wizyjnego</p>
-            <h2 v-if="error" style="color: var(--red)">Błąd</h2>
+            <h2 v-if="data.error" style="color: var(--red)">Błąd</h2>
             <h2 v-else style="color: var(--green)">OK</h2>
         </div>
         <div class="card">
             <p class="p1">Panel</p>
             <div class="lights">
-                <div class="light green-light" :class="{ active: green_light }"></div>
-                <div class="light red-light" :class="{ active: red_light }"></div>
-                <div class="light orange-light" :class="{ active: orange_light }"></div>
-                <div class="light yellow-button-light" :class="{ active: yellow_button_light }"></div>
-                <div class="light white-light" :class="{ active: white_light }"></div>
-                <div class="switch" :class="{ on: switch_status }"></div>
+                <div class="light green-light" :class="{ active: data.green_light }"></div>
+                <div class="light red-light" :class="{ active: data.red_light }"></div>
+                <div class="light orange-light" :class="{ active: data.orange_light }"></div>
+                <div class="light yellow-button-light" :class="{ active: data.yellow_button_light }"></div>
+                <div class="light white-light" :class="{ active: data.white_light }"></div>
+                <div class="switch" :class="{ on: data.switch_status }"></div>
             </div>
         </div>
     </div>
