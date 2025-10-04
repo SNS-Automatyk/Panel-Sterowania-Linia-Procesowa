@@ -5,6 +5,11 @@ export default {
     data: function () {
         return {
             speed: 0,
+            dragging: false,
+            // Cached layout for pointer math
+            layout: { left: 0, top: 0, width: 0, height: 0 },
+            knobVisibilityTimer: null,
+            knobVisible: false
         }
     },
     props: {
@@ -12,6 +17,66 @@ export default {
             type: Object,
             required: false
         }
+    },
+    computed: {
+        // Position of the knob along the circle, in px relative to the button container
+        knobStyle() {
+            const { width, height } = this.layout
+            if (!width || !height) return { display: 'none' }
+
+            // Geometry derived from the SVG symbol and CSS
+            const cx = width * 0.5
+            const cy = height * (75 / 150) // 0.533333...
+            const r = height * (37.5 / 150)  // 0.233333...
+
+            // Arc math (matches stroke setup): total circumference units 220, gap 60
+            const GAP = 60
+            const CIRC = 220
+            const GAP_ANGLE = 360 * GAP / CIRC // ~98.18 deg
+            const ARC_ANGLE = 360 - GAP_ANGLE  // ~261.82 deg
+            const ROTATION_DEG = 138
+
+            const start = 0
+            const angleOnArc = start + (this.speed / 100) * ARC_ANGLE
+            // Apply the same rotation as the ring uses
+            const phi = (angleOnArc + ROTATION_DEG) * (Math.PI / 180)
+
+            const x = cx + r * Math.cos(phi)
+            const y = cy + r * Math.sin(phi)
+
+
+            return {
+                left: `${x}px`,
+                top: `${y}px`,
+            }
+        }
+    },
+    mounted() {
+        // Initialize from props if available
+        if (this.data && typeof this.data.speed === 'number') {
+            this.speed = Math.max(0, Math.min(100, this.data.speed))
+        }
+        // Sync input field
+        this.$nextTick(() => {
+            this.updateLayout()
+            if (this.$refs.input) {
+                this.$refs.input.value = this.speed + '%'
+                try {
+                    this.$refs.input.setSelectionRange(this.$refs.input.value.length - 1, this.$refs.input.value.length - 1)
+                } catch {}
+            }
+        })
+
+        window.addEventListener('resize', this.updateLayout, { passive: true })
+        window.addEventListener('pointermove', this.onPointerMove, { passive: false })
+        window.addEventListener('pointerup', this.onPointerUp, { passive: true })
+        window.addEventListener('pointercancel', this.onPointerUp, { passive: true })
+    },
+    beforeUnmount() {
+        window.removeEventListener('resize', this.updateLayout)
+        window.removeEventListener('pointermove', this.onPointerMove)
+        window.removeEventListener('pointerup', this.onPointerUp)
+        window.removeEventListener('pointercancel', this.onPointerUp)
     },
     methods: {
 
@@ -49,6 +114,84 @@ export default {
             }
 
             console.log('For robots: ' + this.getInt(e.target.value));
+        },
+
+        updateLayout() {
+            if (this.$refs.knob) {
+                const rect = this.$refs.knob.getBoundingClientRect()
+                this.layout = { left: rect.left, top: rect.top, width: rect.width, height: rect.height }
+            }
+        },
+
+        // Pointer interactions for dragging the knob along the ring
+        onPointerDown(e) {
+            this.updateLayout()
+            this.dragging = true
+            this.updateSpeedFromPointer(e.clientX, e.clientY)
+            // prevent scrolling while dragging on touch
+            e.preventDefault()
+        },
+        onPointerMove(e) {
+            if (!this.dragging) return
+            this.updateSpeedFromPointer(e.clientX, e.clientY)
+            e.preventDefault()
+        },
+        onPointerUp() {
+            this.dragging = false
+        },
+        updateSpeedFromPointer(clientX, clientY) {
+            const { left, top, width, height } = this.layout
+            if (!width || !height) return
+
+
+            // Center and radius in px (from symbol geometry)
+            const cx = left + width * 0.5
+            const cy = top + height * (80 / 150)
+
+            // Arc bounds (avoid the gap)
+            const GAP = 60
+            const CIRC = 220
+            const GAP_ANGLE = 360 * GAP / CIRC
+            const ARC_ANGLE = 360 - GAP_ANGLE
+            const start = 0
+            const end = 360 - start
+
+            const dx = clientX - cx
+            const dy = clientY - cy
+            let angle = Math.atan2(dy, dx) * (180 / Math.PI) // -180..180, 0 at 3 o'clock
+            if (angle < -GAP_ANGLE / 2) angle += 360 // 0..360
+
+            // Adjust for the same rotation applied to the circle
+            const ROTATION_DEG = 138
+            let a = angle - ROTATION_DEG
+            if (a < -GAP_ANGLE / 2) a += 360
+
+            // Clamp into arc range
+            let clamped = a
+            if (a < start) clamped = start
+            if (a > end) clamped = end
+
+            let s = Math.round(((clamped - start) / ARC_ANGLE) * 100)
+            if (s < 0) s = 0
+            if (s > 100) s = 100
+            this.speed = s
+
+            // keep input in sync
+            if (this.$refs.input) {
+                this.$refs.input.value = this.speed + '%'
+            }
+            if (this.$refs.powerOnCircle) {
+                this.$refs.powerOnCircle.classList.add('no-transition')
+            }
+            this.knobVisible = true;
+
+            this.knobVisibilityTimer = setTimeout(() => {
+                this.knobVisible = false
+                if (this.$refs.powerOnCircle) {
+                    this.$refs.powerOnCircle.classList.remove('no-transition')
+                }
+            }, 1000);
+
         },
 
         getInt: function (val) {
@@ -101,8 +244,12 @@ export default {
                     <use xlink:href="#circle1" class="circle" />
                 </svg>
                 <svg class="power-on">
-                    <use xlink:href="#circle1" class="circle" :style="{ 'stroke-dashoffset': 220-(speed/100*160) }"/>
+                    <use xlink:href="#circle1" class="circle" :style="{ 'stroke-dashoffset': 220-(speed/100*160) }" ref="powerOnCircle"/>
                 </svg>
+                <!-- Drag layer + knob -->
+                <div class="knob-layer" ref="knob" @pointerdown="onPointerDown" :style="{ opacity: knobVisible ? '1' : '0' }">
+                    <div class="knob" :style="knobStyle"></div>
+                </div>
             </div>
         </div>
 
@@ -141,7 +288,7 @@ input.speed {
     background-color: transparent;
     border: none;
     outline: none;
-    z-index: 2;
+    z-index: 4;
     font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
     // margin-top: 10px;
     background-color: #3f3f3f;
@@ -235,10 +382,31 @@ button {
         .power-on {
           .circle {
             opacity: 1;
-            transition: transform 0s ease, stroke-dashoffset 1s ease 0s;
+            &:not(.no-transition) {
+                transition: transform 0s ease, stroke-dashoffset 1s ease 0s;
+            }
           }
           
         }
+                /* Transparent layer to capture pointer events and position the knob */
+                .knob-layer {
+                    position: absolute;
+                    inset: 0;
+                    z-index: 3;
+                    touch-action: none; /* allow custom pan */
+                    transition: opacity 0.3s ease-in;
+                }
+                .knob {
+                    position: absolute;
+                    width: 18px;
+                    height: 18px;
+                    margin-left: -9px; /* center over (left, top) */
+                    margin-top: -9px;
+                    border-radius: 50%;
+                    background: var(--green);
+                    box-shadow: 0 0 0 3px rgba(0,0,0,0.25), 0 0 10px rgba(0,0,0,0.35);
+                    cursor: grab;
+                }
       }
     }
 
