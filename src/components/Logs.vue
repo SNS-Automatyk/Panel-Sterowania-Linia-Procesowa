@@ -108,7 +108,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .back_button {
     cursor: pointer;
     margin-bottom: 6px;
@@ -149,6 +149,10 @@ export default {
     border-radius: 6px;
     padding: 6px 10px;
     cursor: pointer;
+    transition: transform 0.1s ease-in-out;
+    &:active {
+        transform: scale(0.95);
+    }
 }
 .btn:disabled {
     opacity: 0.6;
