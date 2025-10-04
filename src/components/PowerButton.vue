@@ -29,7 +29,7 @@ export default {
     },
 
     async processingChange() {
-      await fetch(API_URL, {
+      await fetch("http://" + API_URL, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: { on_off: 1 } })
@@ -53,34 +53,36 @@ export default {
 
 
 <template>
-  <!-- <p>Status: {{ processing }}</p> -->
-  <div v-on:click="buttonClick" class="power-switch" >
-    <!-- <input type="checkbox" :checked="data.green_light" v-on:change="processingChange" /> -->
-    <div class="button" :class="{ active: data.green_light }">
-      <svg class="power-off">
-        <use xlink:href="#line" class="line" />
-        <use xlink:href="#circle" class="circle" />
-      </svg>
-      <svg class="power-on">
-        <use xlink:href="#line" class="line" />
-        <use xlink:href="#circle" class="circle" />
-      </svg>
+  <div>
+    <!-- <p>Status: {{ processing }}</p> -->
+    <div v-on:click="buttonClick" class="power-switch">
+      <!-- <input type="checkbox" :checked="data.green_light" v-on:change="processingChange" /> -->
+      <div class="button" :class="{ active: data.green_light }">
+        <svg class="power-off">
+          <use xlink:href="#line" class="line" />
+          <use xlink:href="#circle" class="circle" />
+        </svg>
+        <svg class="power-on">
+          <use xlink:href="#line" class="line" />
+          <use xlink:href="#circle" class="circle" />
+        </svg>
+      </div>
     </div>
+
+    <!-- SVG -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+      <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" id="line">
+        <line x1="75" y1="34" x2="75" y2="78" />
+      </symbol>
+      <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" id="circle">
+        <circle cx="75" cy="80" r="45" />
+      </symbol>
+    </svg>
+
+    <Overlay ref="overlay">
+      <TurnOff @hide="$refs.overlay.hide()" ref="turnOff" :turnOff="turnOff" />
+    </Overlay>
   </div>
-
-  <!-- SVG -->
-  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-    <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" id="line">
-      <line x1="75" y1="34" x2="75" y2="78" />
-    </symbol>
-    <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" id="circle">
-      <circle cx="75" cy="80" r="45" />
-    </symbol>
-  </svg>
-
-  <Overlay ref="overlay">
-    <TurnOff @hide="$refs.overlay.hide()" ref="turnOff" :turnOff="turnOff"/>
-  </Overlay>
 </template>
     
 <style scoped lang="scss">

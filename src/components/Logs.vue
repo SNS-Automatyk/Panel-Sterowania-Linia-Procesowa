@@ -58,7 +58,7 @@ export default {
             this.loading = this.logs.length === 0; // show loader only on first load
             this.error = ''
             try {
-                const response = await fetch(API_URL + 'logs');
+                const response = await fetch("http://" + API_URL + '/logs');
                 if (!response.ok) throw new Error(`Błąd pobierania: ${response.status}`)
                 const data = await response.json();
                 this.logs = Array.isArray(data?.logs) ? data.logs : [];

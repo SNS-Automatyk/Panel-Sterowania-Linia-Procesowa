@@ -6,7 +6,11 @@ export default {
     data() {
         return {
             response: '',
-            timer: '',
+            // websocket connection + reconnect timer
+            ws: null,
+            reconnectTimer: null,
+            reconnectDelayMs: 1000, // will backoff up to max
+            maxReconnectDelayMs: 5000,
             data: {
                 "analyze": 0,
                 "result": 0,
@@ -28,36 +32,92 @@ export default {
                 is_connected: false,
             },
             rpi_last_connected: null,
-            update_key: 0,
+            // deprecated: update_key used for forcing computed updates during polling
         }
     },
     created() {
-        this.loadData();
-        this.timer = setInterval(this.loadData, 500);
+        // Start live updates over WebSocket instead of periodic fetch
+        this.openWebSocket();
     },
-    beforeDestroy() {
-        clearInterval(this.timer);
+    beforeUnmount() {
+        // Cleanup ws + any pending reconnects
+        try {
+            if (this.reconnectTimer) {
+                clearTimeout(this.reconnectTimer);
+                this.reconnectTimer = null;
+            }
+            if (this.ws) {
+                this.ws.onopen = null;
+                this.ws.onmessage = null;
+                this.ws.onclose = null;
+                this.ws.onerror = null;
+                try { this.ws.close(); } catch (e) {}
+                this.ws = null;
+            }
+        } catch (e) {
+            // no-op
+        }
     },
     computed: {
         rpi_connected() {
-            this.update_key;
-            if (this.rpi_last_connected === null) {
-                return false;
-            }
+            // Consider connected if WS is open, otherwise fallback to last message time window
+            if (this.ws && this.ws.readyState === 1) return true;
+            if (this.rpi_last_connected === null) return false;
             return (Date.now() - this.rpi_last_connected) <= 2000;
         }
     },
     methods: {
-        async loadData() {
-            // console.log("loading...")
-            this.update_key += 1;
-            this.response = "Loading..."
-            const response = await fetch(API_STATUS)
-            response.json().then(data => {
-                this.response = data
-                this.data = data.data
-                this.rpi_last_connected = Date.now()
-            })
+        openWebSocket() {
+            try {
+                const ws = new WebSocket("ws://" + API_URL);
+                this.ws = ws;
+
+                ws.onopen = () => {
+                    // Reset reconnect delay on successful connect
+                    this.rpi_last_connected = Date.now();
+                    this.reconnectDelayMs = 1000;
+                    if (this.reconnectTimer) {
+                        clearTimeout(this.reconnectTimer);
+                        this.reconnectTimer = null;
+                    }
+                };
+
+                ws.onmessage = (event) => {
+                    try {
+                        const payload = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+                        this.response = payload;
+                        if (payload && payload.data) {
+                            this.data = payload.data;
+                        }
+                    } catch (e) {
+                        // Non-JSON or parse error; ignore
+                    } finally {
+                        this.rpi_last_connected = Date.now();
+                    }
+                };
+
+                ws.onclose = () => {
+                    // Attempt reconnect with backoff
+                    this.scheduleReconnect();
+                };
+
+                ws.onerror = () => {
+                    // Close to trigger onclose and reconnect
+                    try { ws.close(); } catch (e) {}
+                };
+            } catch (e) {
+                // Unable to create WS, try again later
+                this.scheduleReconnect();
+            }
+        },
+        scheduleReconnect() {
+            if (this.reconnectTimer) return; // already scheduled
+            const delay = Math.min(this.reconnectDelayMs, this.maxReconnectDelayMs);
+            this.reconnectTimer = setTimeout(() => {
+                this.reconnectTimer = null;
+                this.reconnectDelayMs = Math.min(this.reconnectDelayMs * 2, this.maxReconnectDelayMs);
+                this.openWebSocket();
+            }, delay);
         },
     },
 }
