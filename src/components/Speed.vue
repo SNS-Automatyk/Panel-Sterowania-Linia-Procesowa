@@ -85,6 +85,10 @@ button {
         font-size: 15px;
         color: var(--blue);
     }
+    transition: transform 0.1s ease-in-out;
+    &:active {
+        transform: scale(0.95); 
+    }
 }
 
 

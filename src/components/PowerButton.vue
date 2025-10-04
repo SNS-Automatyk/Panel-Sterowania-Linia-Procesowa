@@ -100,6 +100,10 @@ export default {
   margin-top: 15px;
   box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.5);
   border-radius: 50%;
+  transition: transform 0.1s ease-in-out;
+  &:active {
+      transform: scale(0.95);
+  }
 
   .button {
     width: 100%;
@@ -109,6 +113,7 @@ export default {
     align-items: center;
     position: relative;
     transform: translateY(-5px);
+    
 
     &:after {
       content: "";

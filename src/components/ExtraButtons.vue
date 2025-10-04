@@ -45,15 +45,16 @@ export default {
         height: 40px;
         border-radius: 50%;
         cursor: pointer;
-        transition: all 0.2s ease-in-out;
+        transition: all 0.1s ease-in-out;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        border: rgba(0, 0, 0, 0.4) solid 4px;
+        &:active {
+            transform: scale(0.9);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
     }
     .red-button {
         background-color: var(--red);
-        &.active {
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
-            transform: scale(1.1);
-        }
     }
     .yellow-button {
         background-color: var(--orange);
