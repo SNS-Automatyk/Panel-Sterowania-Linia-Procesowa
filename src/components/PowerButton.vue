@@ -3,8 +3,6 @@ import Overlay from './Overlay.vue'
 import TurnOff from './TurnOff.vue'
 
 import { API_URL } from '../variables'
-const API_TURN_ON = API_URL + `turnOn/`;
-const API_TURN_OFF = API_URL + `turnOff/`;
 
 export default {
   props: {
@@ -27,24 +25,25 @@ export default {
 
     turnOff() {
       this.hideTurnOff()
-      this.data.processing = false;
       this.processingChange()
     },
 
     async processingChange() {
-      const url = this.data.processing ? API_TURN_ON : API_TURN_OFF
-      const response = await fetch(url, { method: "POST" });
-      response.json().then(data => {
-        this.data.processing = data.data.processing
-      })
+      const response = await fetch(API_URL, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: { on_off: 1 } })
+      });
+      // response.json().then(data => {
+      //   this.data.green_light = data.data.green_light
+      // })
     },
 
     buttonClick: function() {
-      if (this.data.processing) {
+      if (this.data.green_light) {
         this.showTurnOff()
         return
       }
-      this.data.processing = !this.data.processing
       this.processingChange()
     }
   }
@@ -55,8 +54,8 @@ export default {
 <template>
   <!-- <p>Status: {{ processing }}</p> -->
   <div v-on:click="buttonClick" class="power-switch" >
-    <!-- <input type="checkbox" :checked="data.processing" v-on:change="processingChange" /> -->
-    <div class="button" :class="{ active: data.processing }">
+    <!-- <input type="checkbox" :checked="data.green_light" v-on:change="processingChange" /> -->
+    <div class="button" :class="{ active: data.green_light }">
       <svg class="power-off">
         <use xlink:href="#line" class="line" />
         <use xlink:href="#circle" class="circle" />

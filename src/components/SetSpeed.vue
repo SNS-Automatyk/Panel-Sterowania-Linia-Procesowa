@@ -1,6 +1,5 @@
 <script>
 import { API_URL } from '../variables'
-const API_SET_SPEED = API_URL + `speed/`;
 
 export default {
     data: function () {
@@ -63,25 +62,24 @@ export default {
         },
 
         loadSpeed: function () {
-            this.speed = this.data.current_speed;
+            this.speed = this.data.speed;
             this.$refs.input.value = this.speed + '%';
             this.$refs.input.setSelectionRange(this.$refs.input.value.length - 1, this.$refs.input.value.length - 1);
             
         },
 
-        saveSpeed: function () {
-            this.data.current_speed = "?";
-            const response = fetch(API_SET_SPEED + this.speed, { method: "PUT" });
-            // response.json().then(data => {
-            //     this.response = data
-            //     this.data.sp = data.data.processing
-            // })
+        saveSpeed: async function () {
+            this.data.speed = "?";
+            fetch(API_URL, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ data: { speed: this.speed } })
+            });
             this.close();
         },
          
         close: function () {
             this.$emit('hide')
-            
         }
     }
 }

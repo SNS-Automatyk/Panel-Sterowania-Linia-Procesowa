@@ -1,8 +1,6 @@
 <script>
 import { API_URL } from '../variables'
-const API_STATUS = API_URL + `status/`;
-const API_TURN_ON = API_URL + `turnOn/`;
-const API_TURN_OFF = API_URL + `turnOff/`;
+const API_STATUS = API_URL;
 
 export default {
     data() {
@@ -10,18 +8,26 @@ export default {
             response: '',
             timer: '',
             data: {
-                processing: false,
-                active: false,
-                status_message: '?',
-                current_speed: 0.0,
-
-                count_ok: 0,
-                count_nok: 0,
-                manual_mode: false,
-                warn_active: false,
-                alarm_active: false,
-                safety_active: false
-            }
+                "analyze": 0,
+                "result": 0,
+                "finished": 0,
+                "error": 0,
+                "on_off": 0,
+                "red_button": 0,
+                "yellow_button": 0,
+                "switch_status": 0,
+                "green_light": 0,
+                "red_light": 0,
+                "yellow_button_light": 0,
+                "orange_light": 0,
+                "white_light": 0,
+                "good_count": 0,
+                "bad_count": 0,
+                "status": 0,
+                "speed": 0
+            },
+            rpi_last_connected: null,
+            update_key: 0,
         }
     },
     created() {
@@ -31,15 +37,25 @@ export default {
     beforeDestroy() {
         clearInterval(this.timer);
     },
+    computed: {
+        rpi_connected() {
+            this.update_key;
+            if (this.rpi_last_connected === null) {
+                return false;
+            }
+            return (Date.now() - this.rpi_last_connected) <= 2000;
+        }
+    },
     methods: {
         async loadData() {
-            console.log("loading...")
+            // console.log("loading...")
+            this.update_key += 1;
             this.response = "Loading..."
             const response = await fetch(API_STATUS)
             response.json().then(data => {
                 this.response = data
                 this.data = data.data
-
+                this.rpi_last_connected = Date.now()
             })
         },
     },
@@ -56,21 +72,23 @@ import Cards from './Cards.vue'
 
 
 <template>
-    <PowerStatus :active="data.active" />
-    <PowerButton :data="data"  />
-    <p class="status">Status: <span>{{ data.status_message }}</span></p>
-    <Speed :data="data" />
-    <Cards v-bind="data" />
-    
+    <div>
+        <PowerStatus :is_connected="data.is_connected" :rpi_connected="rpi_connected" />
+        <PowerButton :data="data" />
+        <p class="status">Status: <span>{{ data.status }}</span></p>
+        <Speed :data="data" />
+        <Cards v-bind="data" />
 
-    <!-- <span @click="loadData" class="button center">Odśwież</span>
+
+        <!-- <span @click="loadData" class="button center">Odśwież</span>
 
     <p class="mt-2">{{ response }}</p> -->
-    <!-- <div class="container">
+        <!-- <div class="container">
         <h1>1. Input API URL:</h1>
         <input v-model="url">
         <h1>2. Press the button:</h1>
       </div> -->
+    </div>
 </template>
 
 <style lang="scss">

@@ -25,40 +25,43 @@ export default {
 
 
 <template>
-    <div class="card">
-        <p> AKTUALNA PRĘDKOŚĆ</p>
-        <div class="graph">
-            <div class="button">
-                <p>{{ data.current_speed }}%</p>
-                <svg class="power-off">
-                    <use xlink:href="#circle1" class="circle" />
-                </svg>
-                <svg class="power-on">
-                    <use xlink:href="#circle1" class="circle" :style="{ 'stroke-dashoffset': 220-(data.current_speed/100*160) }"/>
-                </svg>
+    <div>
+        <div class="card">
+            <p> AKTUALNA PRĘDKOŚĆ</p>
+            <div class="graph">
+                <div class="button">
+                    <p>{{ data.speed }}%</p>
+                    <svg class="power-off">
+                        <use xlink:href="#circle1" class="circle" />
+                    </svg>
+                    <svg class="power-on">
+                        <use xlink:href="#circle1" class="circle"
+                            :style="{ 'stroke-dashoffset': 220 - (data.speed /100*160) }" />
+                    </svg>
+                </div>
             </div>
-        </div>
 
-        <!-- <router-link :to="'speed/' + speed"> -->
+            <!-- <router-link :to="'speed/' + speed"> -->
             <button v-on:click="showSpeed">
                 <p>Zmień prędkość</p>
             </button>
-        <!-- </router-link> -->
+            <!-- </router-link> -->
 
 
-        
-    
-        <!-- SVG -->
-        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" id="circle1">
-            <circle cx="75" cy="80" r="35"/>
-        </symbol>
-        </svg>
+
+
+            <!-- SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" id="circle1">
+                    <circle cx="75" cy="80" r="35" />
+                </symbol>
+            </svg>
+        </div>
+
+        <Overlay ref="setSpeedOverlay">
+            <SetSpeed @hide="$refs.setSpeedOverlay.hide()" ref="setSpeed" :data="data" />
+        </Overlay>
     </div>
-
-    <Overlay ref="setSpeedOverlay">
-        <SetSpeed @hide="$refs.setSpeedOverlay.hide()" ref="setSpeed" :data="data"/>
-    </Overlay>
 
 </template>
 

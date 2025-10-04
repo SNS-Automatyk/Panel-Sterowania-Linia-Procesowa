@@ -1,28 +1,40 @@
 <script>
 export default {
     props: {
-        count_ok: {
+        error: {
             type: Number,
             required: true
         },
-        count_nok: {
+        switch_status: {
             type: Number,
             required: true
         },
-        manual_mode: {
-            type: Boolean,
+        green_light: {
+            type: Number,
             required: true
         },
-        warn_active: {
-            type: Boolean,
+        red_light: {
+            type: Number,
             required: true
         },
-        alarm_active: {
-            type: Boolean,
+        orange_light: {
+            type: Number,
             required: true
         },
-        safety_active: {
-            type: Boolean,
+        yellow_button_light: {
+            type: Number,
+            required: true
+        },
+        white_light: {
+            type: Number,
+            required: true
+        },
+        good_count: {
+            type: Number,
+            required: true
+        },
+        bad_count: {
+            type: Number,
             required: true
         }
     }
@@ -32,32 +44,28 @@ export default {
 <template>
     <div class="card_container">
         <div class="card">
-            <h1 style="color: var(--green)">{{ count_ok }}</h1>
+            <h1 style="color: var(--green)">{{ good_count }}</h1>
             <p class="p2">Poprawnych itemków</p>
         </div>
         <div class="card">
-            <h1 style="color: var(--orange)">{{ count_nok }}</h1>
+            <h1 style="color: var(--orange)">{{ bad_count }}</h1>
             <p class="p2">Złych itemków</p>
         </div>
         <div class="card">
-            <p class="p1">Tryb</p>
-            <h2 v-if="manual_mode" style="color: var(--blue)">Manualny</h2>
-            <h2 v-else style="color: var(--green)">Automatyczny</h2>
-        </div>
-        <div class="card">
-            <p class="p1">Warn</p>
-            <h2 v-if="warn_active" style="color: var(--red)">Aktywny</h2>
-            <h2 v-else style="color: var(--green)">Nieaktywny</h2>
-        </div>
-        <div class="card">
-            <p class="p1">Alarm</p>
-            <h2 v-if="alarm_active" style="color: var(--red)">Aktywny</h2>
-            <h2 v-else style="color: var(--green)">Nieaktywny</h2>
-        </div>
-        <div class="card">
-            <p class="p1">Safety</p>
-            <h2 v-if="safety_active" style="color: var(--red)">Zatrzymanie awaryjne</h2>
+            <p class="p1">Status systemu wizyjnego</p>
+            <h2 v-if="error" style="color: var(--red)">Błąd</h2>
             <h2 v-else style="color: var(--green)">OK</h2>
+        </div>
+        <div class="card">
+            <p class="p1">Panel</p>
+            <div class="lights">
+                <div class="light green-light" :class="{ active: green_light }"></div>
+                <div class="light red-light" :class="{ active: red_light }"></div>
+                <div class="light orange-light" :class="{ active: orange_light }"></div>
+                <div class="light yellow-button-light" :class="{ active: yellow_button_light }"></div>
+                <div class="light white-light" :class="{ active: white_light }"></div>
+                <div class="switch" :class="{ on: switch_status }"></div>
+            </div>
         </div>
     </div>
 </template>
@@ -101,4 +109,73 @@ h2 {
     // margin-top: -10px;
     margin-bottom: 20px;
 }
+.lights {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+.light {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #d1d1d1;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+
+    &::after {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        opacity: 0.75;
+        transition: opacity 0.2s;
+        background: black;
+    }
+    &.active::after {
+        opacity: 0;
+    }
+    &.green-light {
+        background-color: #4caf50;
+    }
+    &.red-light {
+        background-color: #f44336;
+    }
+    &.orange-light {
+        background-color: #ff9800;
+    }
+    &.yellow-button-light {
+        background-color: #ffeb3b;
+    }
+    &.white-light {
+        background-color: #ffffff;
+    }
+}
+.switch {
+    width: 35px;
+    height: 20px;
+    border-radius: 15px;
+    background-color: #535353;
+    position: relative;
+    transition: background-color 0.2s;
+    &.on {
+        background-color: #4caf50;
+    }
+    &::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background-color: #ffffff;
+        transition: left 0.2s;
+    }
+    &.on::after {
+        left: 18px;
+        
+    }
+}   
 </style>
