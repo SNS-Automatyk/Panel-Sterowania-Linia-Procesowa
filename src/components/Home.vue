@@ -9,7 +9,6 @@ export default {
             ws: null,
             reconnectTimer: null,
             reconnectDelayMs: 1000, // will backoff up to max
-            maxReconnectDelayMs: 5000,
             data: {
                 "analyze": 0,
                 "result": 0,
@@ -111,12 +110,10 @@ export default {
         },
         scheduleReconnect() {
             if (this.reconnectTimer) return; // already scheduled
-            const delay = Math.min(this.reconnectDelayMs, this.maxReconnectDelayMs);
             this.reconnectTimer = setTimeout(() => {
                 this.reconnectTimer = null;
-                this.reconnectDelayMs = Math.min(this.reconnectDelayMs * 2, this.maxReconnectDelayMs);
                 this.openWebSocket();
-            }, delay);
+            }, this.reconnectDelayMs);
         },
     },
 }
