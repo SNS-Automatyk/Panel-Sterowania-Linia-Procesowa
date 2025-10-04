@@ -1,6 +1,5 @@
 <script>
 import { API_URL } from '../variables'
-const API_STATUS = API_URL;
 
 export default {
     data() {
