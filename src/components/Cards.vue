@@ -1,10 +1,24 @@
 <script>
+import { API_URL } from '../variables'
+
 export default {
     props: {
         data: {
             type: Object,
             required: true
         },
+    },
+    methods: {
+        toggleSystemWizyjny() {
+            this.data.system_wizyjny_on_off = !this.data.system_wizyjny_on_off;
+            fetch("http://" + API_URL, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ data: { system_wizyjny_on_off: this.data.system_wizyjny_on_off } })
+            });
+        }
     }
 }
 </script>
@@ -21,8 +35,14 @@ export default {
         </div>
         <div class="card">
             <p class="p1">Status systemu wizyjnego</p>
-            <h2 v-if="data.error" style="color: var(--red)">Błąd</h2>
-            <h2 v-else style="color: var(--green)">OK</h2>
+            <div style="display: flex; align-items: end; gap: 10px; margin-top: 0">
+                <input type="checkbox" id="system_wizyjny_on_off" class="switch" @change="toggleSystemWizyjny"
+                    :checked="data.system_wizyjny_on_off">
+
+                <h2 v-if="!data.system_wizyjny_on_off" style="color: var(--orange)">OFF</h2>
+                <h2 v-else-if="data.error" style="color: var(--red)">Błąd</h2>
+                <h2 v-else style="color: var(--green)">OK</h2>
+            </div>
         </div>
         <div class="card">
             <p class="p1">Panel</p>
@@ -56,6 +76,7 @@ h1 {
 h2 {
     margin-top: -6px;
     font-size: 19px;
+    line-height: 19px;
     font-weight: bold;
 }
 .p1 {
@@ -146,4 +167,35 @@ h2 {
         
     }
 }   
+
+input.switch {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 35px;
+    height: 20px;
+    background-color: #535353;
+    border-radius: 15px;
+    position: relative;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+input.switch:checked {
+    background-color: #4caf50;
+}
+input.switch::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    transition: left 0.2s;
+}
+input.switch:checked::after {
+    left: 18px;
+}
 </style>
