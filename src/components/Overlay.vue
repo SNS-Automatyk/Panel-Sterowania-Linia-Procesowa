@@ -12,6 +12,7 @@ export default {
                     this.$el.firstElementChild.classList.remove("scale-up-top");
                 }, 200)
             })
+            this.$emit('show');
         },
         hide: function () {
             this.$el.style.opacity = 0;
@@ -20,6 +21,7 @@ export default {
                 this.$el.style.display = "none";
                 this.$el.firstElementChild.classList.remove("scale-down-top");
             }, 200)
+            this.$emit('hide');
         },
         hideOnBackround: function (e) {
             if (e.target.classList.contains("overlay")) {

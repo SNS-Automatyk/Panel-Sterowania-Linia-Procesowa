@@ -1,7 +1,18 @@
 <script>
 import { API_URL } from '../variables'
+import CameraPreviewModal from '@/components/CameraPreviewModal.vue';
+import Overlay from './Overlay.vue';
 
 export default {
+    data() {
+        return {
+            API_URL: API_URL,
+        }
+    },
+    components: {
+        CameraPreviewModal,
+        Overlay
+    },
     props: {
         data: {
             type: Object,
@@ -54,6 +65,17 @@ export default {
                 <div class="light white-light" :class="{ active: data.white_light }"></div>
                 <div class="switch" :class="{ on: data.switch_status }"></div>
             </div>
+        </div>
+        <div class="card">
+            <p class="p1">Podgląd kamery</p>
+            <button @click="$refs.camera_preview_overlay.show()"
+                style="margin-top: 4px; padding: 6px 12px; background-color: var(--blue); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Otwórz podgląd
+            </button>
+
+            <Overlay ref="camera_preview_overlay" @show="$refs.camera_preview_modal.show()">
+                <CameraPreviewModal @hide="$refs.camera_preview_overlay.hide()" ref="camera_preview_modal" />
+            </Overlay>
         </div>
     </div>
 </template>
