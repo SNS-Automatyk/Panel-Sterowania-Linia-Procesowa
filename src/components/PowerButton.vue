@@ -40,11 +40,11 @@ export default {
     },
 
     buttonClick: function() {
-      if (this.data.green_light) {
-        this.showTurnOff()
-        return
-      }
-      this.data.green_light = 1
+      // if (this.data.green_light) {
+      //   this.showTurnOff()
+      //   return
+      // }
+      // this.data.green_light = 1
       this.processingChange()
     }
   }
