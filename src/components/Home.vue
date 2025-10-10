@@ -67,7 +67,7 @@ export default {
     methods: {
         openWebSocket() {
             try {
-                const ws = new WebSocket("ws://" + API_URL);
+                const ws = new WebSocket("ws://" + API_URL + "/api");
                 this.ws = ws;
 
                 ws.onopen = () => {

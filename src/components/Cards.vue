@@ -22,7 +22,7 @@ export default {
     methods: {
         toggleSystemWizyjny() {
             this.data.system_wizyjny_on_off = !this.data.system_wizyjny_on_off;
-            fetch("http://" + API_URL, {
+            fetch("http://" + API_URL + "/api", {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'

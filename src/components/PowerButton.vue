@@ -29,7 +29,7 @@ export default {
     },
 
     async processingChange() {
-      await fetch("http://" + API_URL, {
+      await fetch("http://" + API_URL + "/api", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: { on_off: 1 } })

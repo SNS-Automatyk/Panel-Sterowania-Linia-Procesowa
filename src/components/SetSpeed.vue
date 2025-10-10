@@ -213,7 +213,7 @@ export default {
 
         saveSpeed: async function () {
             this.data.speed = "?";
-            fetch("http://" + API_URL, {
+            fetch("http://" + API_URL + "/api", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ data: { speed: this.speed } })

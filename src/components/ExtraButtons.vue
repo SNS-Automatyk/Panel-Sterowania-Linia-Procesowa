@@ -11,7 +11,7 @@ export default {
       this.sendUpdate("yellow_button")
     },
     async sendUpdate(button) {
-      const response = await fetch("http://" + API_URL, {
+      const response = await fetch("http://" + API_URL + "/api", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: { [button]: 1 } })
