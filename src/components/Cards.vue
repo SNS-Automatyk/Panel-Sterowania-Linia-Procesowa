@@ -29,6 +29,16 @@ export default {
                 },
                 body: JSON.stringify({ data: { system_wizyjny_on_off: this.data.system_wizyjny_on_off } })
             });
+        },
+        analizuj() {
+            this.data.analyze = true;
+            fetch("http://" + API_URL + "/api", {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ data: { analyze: true } })
+            });
         }
     }
 }
@@ -46,13 +56,20 @@ export default {
         </div>
         <div class="card">
             <p class="p1">Status systemu wizyjnego</p>
-            <div style="display: flex; align-items: end; gap: 10px; margin-top: 0">
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 0">
                 <input type="checkbox" id="system_wizyjny_on_off" class="switch" @change="toggleSystemWizyjny"
                     :checked="data.system_wizyjny_on_off">
 
-                <h2 v-if="!data.system_wizyjny_on_off" style="color: var(--orange)">OFF</h2>
-                <h2 v-else-if="data.error" style="color: var(--red)">Błąd</h2>
-                <h2 v-else style="color: var(--green)">OK</h2>
+                <div>
+                    <h2 v-if="!data.system_wizyjny_on_off" style="color: var(--orange)">OFF</h2>
+                    <h2 v-else-if="data.error" style="color: var(--red)">Błąd</h2>
+                    <h2 v-else style="color: var(--green)">OK</h2>
+                </div>
+
+                <button @click="analizuj" :disabled="data.analyze"
+                    style="margin-left: auto; padding: 6px 12px; background-color: var(--blue); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    Analizuj
+                </button>
             </div>
         </div>
         <div class="card">
@@ -96,10 +113,10 @@ h1 {
     font-weight: bold;
 }
 h2 {
-    margin-top: -6px;
     font-size: 19px;
     line-height: 19px;
     font-weight: bold;
+    text-align: center;
 }
 .p1 {
     font-size: 16px;
@@ -125,6 +142,16 @@ h2 {
     align-items: center;
     gap: 8px;
     margin-top: 4px;
+}
+button {
+    &:active {
+        transform: scale(0.98);
+    }
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+        pointer-events: none;
+    }
 }
 .light {
     width: 20px;
