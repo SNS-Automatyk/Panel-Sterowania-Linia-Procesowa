@@ -7,11 +7,11 @@
                 <h2>Logi systemowe</h2>
             </div>
             <div class="logs__controls">
-                <label class="toggle">
+                <!-- <label class="toggle">
                     <input type="checkbox" v-model="autoRefresh" />
                     <span>Auto odświeżanie</span>
-                </label>
-                <button class="btn" @click="fetchLogs" :disabled="loading">Odśwież</button>
+                </label> -->
+                <!-- <button class="btn" @click="fetchLogs" :disabled="loading">Odśwież</button> -->
         </div>
     </div>
 
@@ -49,8 +49,11 @@ export default {
             loading: false,
             error: '',
             autoRefresh: true,
-            intervalId: null,
-            refreshMs: 2000,
+            socket: null,
+            reconnectTimer: null,
+            reconnectDelay: 1500,
+            wsAttempts: 0,
+            maxLogs: 300,
         }
     },
     methods: {
@@ -84,26 +87,114 @@ export default {
                 'badge--info': lv === 'INFO',
                 'badge--debug': lv === 'DEBUG'
             }
+        },
+        resolveWsUrl() {
+            return "ws://" + API_URL + "/logs"
+        },
+        setupWebSocket() {
+            this.closeWebSocket()
+            const url = this.resolveWsUrl()
+            if (!url) return
+
+            try {
+                const socket = new WebSocket(url)
+                this.socket = socket
+
+                socket.onopen = () => {
+                    this.wsAttempts = 0
+                }
+
+                socket.onmessage = (event) => {
+                    try {
+                        const payload = JSON.parse(event.data)
+                        this.handleIncomingLog(payload)
+                    } catch (err) {
+                        console.error('Błąd parsowania logu z WebSocket:', err)
+                    }
+                }
+
+                socket.onerror = () => {
+                    this.scheduleReconnect()
+                    try {
+                        socket.close()
+                    } catch (err) {
+                        console.warn('Błąd zamykania uszkodzonego WebSocket:', err)
+                    }
+                }
+
+                socket.onclose = () => {
+                    this.socket = null
+                    if (this.autoRefresh) {
+                        this.scheduleReconnect()
+                    }
+                }
+            } catch (err) {
+                this.error = 'Nie udało się otworzyć połączenia WebSocket.'
+                console.error('Błąd WebSocket:', err)
+                this.scheduleReconnect()
+            }
+        },
+        handleIncomingLog(log) {
+            if (!log || !log.time) return
+            const idx = this.logs.findIndex(
+                item => item.time === log.time && item.logger === log.logger && item.message === log.message
+            )
+
+            if (idx !== -1) {
+                this.logs.splice(idx, 1, log)
+                return
+            }
+
+            this.logs = [log, ...this.logs].slice(0, this.maxLogs)
+        },
+        scheduleReconnect() {
+            if (!this.autoRefresh) return
+            if (this.reconnectTimer) return
+
+            const delay = Math.min(10000, this.reconnectDelay * Math.max(1, this.wsAttempts + 1))
+            this.wsAttempts += 1
+
+            this.reconnectTimer = setTimeout(() => {
+                this.reconnectTimer = null
+                if (this.autoRefresh) this.setupWebSocket()
+            }, delay)
+        },
+        closeWebSocket() {
+            if (this.reconnectTimer) {
+                clearTimeout(this.reconnectTimer)
+                this.reconnectTimer = null
+            }
+            if (this.socket) {
+                try {
+                    this.socket.onclose = null
+                    this.socket.onerror = null
+                    this.socket.onmessage = null
+                    this.socket.close()
+                } catch (err) {
+                    console.warn('Błąd zamykania WebSocket:', err)
+                }
+                this.socket = null
+            }
         }
     },
     watch: {
         autoRefresh(newVal) {
             if (newVal) {
-                this.intervalId = setInterval(this.fetchLogs, this.refreshMs)
-            } else if (this.intervalId) {
-                clearInterval(this.intervalId)
-                this.intervalId = null
+                // this.fetchLogs()
+                this.setupWebSocket()
+            } else {
+                this.closeWebSocket()
             }
         }
     },
     mounted() {
-        this.fetchLogs();
+        // this.fetchLogs();
         if (this.autoRefresh) {
-            this.intervalId = setInterval(this.fetchLogs, this.refreshMs)
+            this.setupWebSocket()
         }
     },
     beforeUnmount() {
-        if (this.intervalId) clearInterval(this.intervalId)
+        this.closeWebSocket()
     }
 }
 </script>
