@@ -61,8 +61,7 @@ export default {
                     :checked="data.system_wizyjny_on_off">
 
                 <div>
-                    <h2 v-if="!data.system_wizyjny_on_off" style="color: var(--orange)">OFF</h2>
-                    <h2 v-else-if="data.error" style="color: var(--red)">Błąd</h2>
+                    <h2 v-if="data.error" style="color: var(--red)">Błąd</h2>
                     <h2 v-else style="color: var(--green)">OK</h2>
                 </div>
 
