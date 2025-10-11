@@ -85,14 +85,17 @@ export default {
         </div>
         <div class="card">
             <p class="p1">Podgląd kamery</p>
-            <button @click="$refs.camera_preview_overlay.show()"
-                style="margin-top: 4px; padding: 6px 12px; background-color: var(--blue); color: white; border: none; border-radius: 4px; cursor: pointer;">
+            <button @click="$refs.camera_preview_overlay.show()">
                 Otwórz podgląd
             </button>
 
             <Overlay ref="camera_preview_overlay" @show="$refs.camera_preview_modal.show()">
                 <CameraPreviewModal @hide="$refs.camera_preview_overlay.hide()" ref="camera_preview_modal" />
             </Overlay>
+        </div>
+        <div class="card">
+            <p class="p1">Wyniki systemu wizyjnego</p>
+            <router-link class="button" to="/images">Zobacz</router-link>
         </div>
     </div>
 </template>
@@ -143,7 +146,21 @@ h2 {
     gap: 8px;
     margin-top: 4px;
 }
-button {
+button,.button {
+    margin-top: 4px;
+    padding: 6px 12px;
+    background-color: var(--blue);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    font-size: 14px;
+    line-height: 14px;
     &:active {
         transform: scale(0.98);
     }

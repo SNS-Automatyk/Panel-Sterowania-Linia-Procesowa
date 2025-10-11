@@ -4,6 +4,7 @@ import App from './App.vue';
 import Home from './components/Home.vue';
 import SetSpeed from './components/SetSpeed.vue';
 import Logs from './components/Logs.vue';
+import AnnotatedGallery from './components/AnnotatedGallery.vue';
 
 import './assets/main.css'
 
@@ -13,7 +14,8 @@ import './assets/main.css'
 const routes = [
     { path: '/', component: Home },
     { path: '/speed/:speed', component: SetSpeed },
-    { path: '/logs', component: Logs }  // Placeholder for future Logs component
+    { path: '/logs', component: Logs },
+    { path: '/images', component: AnnotatedGallery },
 ]
 
 // 3. Create the router instance and pass the `routes` option
