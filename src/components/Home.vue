@@ -132,21 +132,13 @@ import Cards from './Cards.vue'
 <template>
     <div>
         <PowerStatus :is_connected="data.is_connected" :rpi_connected="rpi_connected" />
-        <PowerButton :data="data" />
-        <p class="status">Status: <span>{{ data.status }}</span></p>
-        <ExtraButtons />
-        <Speed :data="data" />
-        <Cards :data="data" />
-
-
-        <!-- <span @click="loadData" class="button center">Odśwież</span>
-
-    <p class="mt-2">{{ response }}</p> -->
-        <!-- <div class="container">
-        <h1>1. Input API URL:</h1>
-        <input v-model="url">
-        <h1>2. Press the button:</h1>
-      </div> -->
+        <div class="main-container" :class="{ rpi_connected: rpi_connected }">
+            <PowerButton :data="data" />
+            <p class="status">Status: <span>{{ data.status }}</span></p>
+            <ExtraButtons />
+            <Speed :data="data" />
+            <Cards :data="data" />
+        </div>
     </div>
 </template>
 
@@ -159,6 +151,11 @@ import Cards from './Cards.vue'
     text-align: center;
     color: #707070;
     padding: 5px 15px;
+}
+
+div.main-container:not(.rpi_connected) {
+    opacity: 0.5 !important;
+    pointer-events: none !important;
 }
 
 .status {
