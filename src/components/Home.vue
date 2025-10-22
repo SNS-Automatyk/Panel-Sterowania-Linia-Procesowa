@@ -62,7 +62,25 @@ export default {
             if (this.ws && this.ws.readyState === 1) return true;
             if (this.rpi_last_connected === null) return false;
             return (Date.now() - this.rpi_last_connected) <= 2000;
-        }
+        },
+        status_text() {
+            switch (this.data.status) {
+                case 0: return "READY";
+                case 1: return "STOP";
+                case 2: return "ERROR";
+                case 3: return "RUNNING";
+                default: return this.data.status;
+            }
+        },
+        status_color() {
+            switch (this.data.status) {
+                case 0: return "var(--blue)";
+                case 1: return "var(--red)";
+                case 2: return "var(--red)";
+                case 3: return "var(--green)";
+                default: return "var(--blue)";
+            }
+        },
     },
     methods: {
         openWebSocket() {
@@ -134,7 +152,7 @@ import Cards from './Cards.vue'
         <PowerStatus :is_connected="data.is_connected" :rpi_connected="rpi_connected" />
         <div class="main-container" :class="{ rpi_connected: rpi_connected }">
             <PowerButton :data="data" />
-            <p class="status">Status: <span>{{ data.status }}</span></p>
+            <p class="status">Status: <span :style="{ color: status_color }">{{ status_text }}</span></p>
             <ExtraButtons />
             <Speed :data="data" />
             <Cards :data="data" />
