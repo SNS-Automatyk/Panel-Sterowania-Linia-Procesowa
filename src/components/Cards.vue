@@ -39,6 +39,16 @@ export default {
                 },
                 body: JSON.stringify({ data: { analyze: true } })
             });
+        },
+        toggleTrybAuto() {
+            this.data.tryb_auto = !this.data.tryb_auto;
+            fetch("http://" + API_URL + "/api", {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ data: { tryb_auto: this.data.tryb_auto } })
+            });
         }
     }
 }
@@ -58,7 +68,7 @@ export default {
             <p class="p1">Status systemu wizyjnego</p>
             <div style="display: flex; align-items: center; gap: 10px; margin-top: 0">
                 <input type="checkbox" id="system_wizyjny_on_off" class="switch" @change="toggleSystemWizyjny"
-                    :checked="data.system_wizyjny_on_off">
+                    :checked="data.system_wizyjny_on_off"/>
 
                 <div>
                     <h2 v-if="data.error" style="color: var(--red)">Błąd</h2>
@@ -95,6 +105,23 @@ export default {
         <div class="card">
             <p class="p1">Wyniki systemu wizyjnego</p>
             <router-link class="button" to="/images">Zobacz</router-link>
+        </div>
+        <div class="card">
+            <p class="p1">Tryb automatyczny</p>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 0">
+                <input type="checkbox" id="tryb_auto" class="switch" @change="toggleTrybAuto" :checked="data.tryb_auto"/>
+            </div>
+        </div>
+        <div class="card">
+            <p class="p1">Czy itemek w podajniku</p>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 0">
+
+                <div>
+                    <h2 v-if="!data.klocek_w_podajniku" style="color: var(--red)">Nie</h2>
+                    <h2 v-else style="color: var(--green)">Tak</h2>
+                </div>
+
+            </div>
         </div>
     </div>
 </template>

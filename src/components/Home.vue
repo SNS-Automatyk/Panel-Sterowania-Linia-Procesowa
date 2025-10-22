@@ -27,6 +27,8 @@ export default {
                 "bad_count": 0,
                 "status": 0,
                 "speed": 0,
+                "klocek_w_podajniku": 0,
+                "tryb_auto": 0,
                 is_connected: false,
             },
             rpi_last_connected: null,
